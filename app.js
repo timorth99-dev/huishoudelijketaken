@@ -2,7 +2,11 @@
 const SUPABASE_URL = 'https://efiwerbxsxinijnrrazo.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVmaXdlcmJ4c3hpbmlqbnJyYXpvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwNDQ1MjEsImV4cCI6MjA5MjYyMDUyMX0.0-JlYp_irUpYyr1VGu6uQ2YgUjtUK00s6wEgHRkpRWs';
 
-const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const { createClient } = window.supabase || {};
+if (!createClient) {
+    console.error('Supabase JS library niet geladen!');
+}
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // --- Date Helpers ---
 function today() {
@@ -76,7 +80,8 @@ async function insertTask(task) {
         .single();
 
     if (error) {
-        console.error('Fout bij toevoegen taak:', error);
+        console.error('Fout bij toevoegen taak:', error.message, error.details, error.hint);
+        alert('Fout bij toevoegen: ' + error.message);
         return null;
     }
     return data;
