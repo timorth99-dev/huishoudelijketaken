@@ -231,23 +231,6 @@ header h1 {
     will-change: transform;
 }
 
-.task-delete-bg {
-    position: absolute;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    width: 100px;
-    background: var(--danger);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.8rem;
-    font-weight: 600;
-    cursor: pointer;
-    z-index: 0;
-}
-
 .task-card.overdue {
     border-left-color: var(--danger);
 }

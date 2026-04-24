@@ -436,7 +436,6 @@ function renderTasks() {
                     </div>
                     <button class="edit-btn" onclick="openEditModal('${safeId}')" title="Bewerken">✏️</button>
                 </div>
-                <div class="task-delete-bg" onclick="deleteTask('${safeId}')">✖ Verwijder</div>
             </div>
         `;
     }).join('');
@@ -473,7 +472,9 @@ function initSwipe() {
             inner.style.transition = 'transform 0.25s ease';
             const diff = currentX - startX;
             if (diff < -80) {
-                inner.style.transform = 'translateX(-100px)';
+                inner.style.transform = 'translateX(0)';
+                const id = card.dataset.id;
+                deleteTask(id);
             } else {
                 inner.style.transform = 'translateX(0)';
             }
