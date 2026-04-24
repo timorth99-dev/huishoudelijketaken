@@ -143,6 +143,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('sw.js').catch(() => {});
     }
+
+    // Setup swipe-to-delete
+    initSwipe();
 });
 
 // --- Event Listeners ---
@@ -417,24 +420,71 @@ function renderTasks() {
 
         return `
             <div class="task-card ${status}" data-id="${safeId}">
-                <button class="task-done-btn" onclick="markDone('${safeId}')" title="Markeer als gedaan">✓</button>
-                <div class="task-info">
-                    <div class="task-name">
-                        ${safeName}
-                        <span class="task-category-badge">${categoryLabels[task.category] || task.category}</span>
+                <div class="task-card-inner">
+                    <button class="task-done-btn" onclick="markDone('${safeId}')" title="Markeer als gedaan">✓</button>
+                    <div class="task-info">
+                        <div class="task-name">
+                            ${safeName}
+                            <span class="task-category-badge">${categoryLabels[task.category] || task.category}</span>
+                        </div>
+                        <div class="task-last-done">
+                            Laatst gedaan: ${lastDoneDate} <span class="since-text">(${sinceText})</span>
+                        </div>
+                        <div class="task-details">
+                            ${dueText} · ${formatInterval(task.interval, task.unit)}
+                        </div>
                     </div>
-                    <div class="task-last-done">
-                        Laatst gedaan: ${lastDoneDate} <span class="since-text">(${sinceText})</span>
-                    </div>
-                    <div class="task-details">
-                        ${dueText} · ${formatInterval(task.interval, task.unit)}
-                    </div>
-                </div>
-                <div class="task-actions">
                     <button class="edit-btn" onclick="openEditModal('${safeId}')" title="Bewerken">✏️</button>
-                    <button class="delete-btn" onclick="deleteTask('${safeId}')" title="Verwijderen">🗑️</button>
                 </div>
+                <div class="task-delete-bg" onclick="deleteTask('${safeId}')">✖ Verwijder</div>
             </div>
         `;
     }).join('');
+    initSwipe();
+}
+
+// --- Swipe to Delete ---
+function initSwipe() {
+    const cards = document.querySelectorAll('.task-card');
+    cards.forEach(card => {
+        if (card.dataset.swipeInit) return;
+        card.dataset.swipeInit = 'true';
+        const inner = card.querySelector('.task-card-inner');
+        let startX = 0, currentX = 0, swiping = false;
+
+        inner.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            currentX = startX;
+            swiping = true;
+            inner.style.transition = 'none';
+        }, { passive: true });
+
+        inner.addEventListener('touchmove', (e) => {
+            if (!swiping) return;
+            currentX = e.touches[0].clientX;
+            const diff = currentX - startX;
+            if (diff < 0) {
+                inner.style.transform = `translateX(${Math.max(diff, -120)}px)`;
+            }
+        }, { passive: true });
+
+        inner.addEventListener('touchend', () => {
+            swiping = false;
+            inner.style.transition = 'transform 0.25s ease';
+            const diff = currentX - startX;
+            if (diff < -80) {
+                inner.style.transform = 'translateX(-100px)';
+            } else {
+                inner.style.transform = 'translateX(0)';
+            }
+        });
+
+        // Reset on click elsewhere
+        document.addEventListener('touchstart', (e) => {
+            if (!card.contains(e.target)) {
+                inner.style.transition = 'transform 0.25s ease';
+                inner.style.transform = 'translateX(0)';
+            }
+        }, { passive: true });
+    });
 }
