@@ -44,9 +44,10 @@ function formatDate(date) {
 
 function formatInterval(interval, unit) {
     const labels = { days: 'dag', weeks: 'week', months: 'maand' };
+    const plurals = { days: 'dagen', weeks: 'weken', months: 'maanden' };
     const label = labels[unit] || unit;
-    const plural = interval === 1 ? label : (label === 'maand' ? 'maanden' : label + 'en');
-    return `Elke ${interval} ${plural}`;
+    const plural = plurals[unit] || (label + 'en');
+    return `Elke ${interval} ${interval === 1 ? label : plural}`;
 }
 
 const categoryLabels = {
