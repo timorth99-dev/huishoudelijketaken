@@ -90,7 +90,7 @@ function addTask() {
   if (!text) return;
 
   const task = {
-    id: Date.now(),
+    id: Date.now() + Math.random(),
     text,
     category: categorySelect.value,
     done: false,
