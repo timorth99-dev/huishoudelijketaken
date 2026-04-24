@@ -50,12 +50,12 @@ function formatInterval(interval, unit) {
 }
 
 const categoryLabels = {
-    keuken: 'ðŸ³ Keuken',
-    badkamer: 'ðŸš¿ Badkamer',
-    woonkamer: 'ðŸ›‹ï¸ Woonkamer',
-    slaapkamer: 'ðŸ›ï¸ Slaapkamer',
-    tuin: 'ðŸŒ¿ Tuin',
-    overig: 'ðŸ“¦ Overig'
+    keuken: '🍳 Keuken',
+    badkamer: '🚿 Badkamer',
+    woonkamer: '🛋️ Woonkamer',
+    slaapkamer: '🛏️ Slaapkamer',
+    tuin: '🌿 Tuin',
+    overig: '📦 Overig'
 };
 
 // --- App State ---
@@ -352,7 +352,7 @@ function renderTasks() {
     if (filtered.length === 0) {
         container.innerHTML = `
             <div class="empty-state">
-                <div class="icon">âœ¨</div>
+                <div class="icon">✨</div>
                 <p>${currentFilter === 'all' ? 'Nog geen taken. Voeg je eerste taak toe!' : 'Geen taken in deze categorie.'}</p>
             </div>
         `;
@@ -380,19 +380,19 @@ function renderTasks() {
 
         return `
             <div class="task-card ${status}" data-id="${safeId}">
-                <button class="task-done-btn" onclick="markDone('${safeId}')" title="Markeer als gedaan">âœ“</button>
+                <button class="task-done-btn" onclick="markDone('${safeId}')" title="Markeer als gedaan">✓</button>
                 <div class="task-info">
                     <div class="task-name">
                         ${safeName}
                         <span class="task-category-badge">${categoryLabels[task.category] || task.category}</span>
                     </div>
                     <div class="task-details">
-                        ${dueText} Â· ${formatInterval(task.interval, task.unit)}
+                        ${dueText} · ${formatInterval(task.interval, task.unit)}
                     </div>
                 </div>
                 <div class="task-actions">
-                    <button class="edit-btn" onclick="openEditModal('${safeId}')" title="Bewerken">âœï¸</button>
-                    <button class="delete-btn" onclick="deleteTask('${safeId}')" title="Verwijderen">ðŸ—‘ï¸</button>
+                    <button class="edit-btn" onclick="openEditModal('${safeId}')" title="Bewerken">✏️</button>
+                    <button class="delete-btn" onclick="deleteTask('${safeId}')" title="Verwijderen">🗑️</button>
                 </div>
             </div>
         `;
