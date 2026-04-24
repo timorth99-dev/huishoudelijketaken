@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Huishoudelijke Taken</title>
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+
+    <!-- Apple PWA -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Taken">
+    <link rel="apple-touch-icon" href="icons/icon-192.svg">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+    <div class="app">
+        <header>
+            <h1>🏠 Huishoudelijke Taken</h1>
+            <p class="subtitle">Plan en beheer je terugkerende taken</p>
+        </header>
+
+        <section class="add-task">
+            <h2>Nieuwe taak toevoegen</h2>
+            <form id="taskForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="taskName">Taaknaam</label>
+                        <input type="text" id="taskName" placeholder="bijv. Ramen zemen" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskInterval">Herhaling</label>
+                        <div class="interval-group">
+                            <input type="number" id="taskInterval" min="1" value="7" required>
+                            <select id="taskUnit">
+                                <option value="days">dagen</option>
+                                <option value="weeks" selected>weken</option>
+                                <option value="months">maanden</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="taskCategory">Categorie</label>
+                        <select id="taskCategory">
+                            <option value="keuken">🍳 Keuken</option>
+                            <option value="badkamer">🚿 Badkamer</option>
+                            <option value="woonkamer">🛋️ Woonkamer</option>
+                            <option value="slaapkamer">🛏️ Slaapkamer</option>
+                            <option value="tuin">🌿 Tuin</option>
+                            <option value="overig">📦 Overig</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskStartDate">Startdatum</label>
+                        <input type="date" id="taskStartDate">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">+ Taak toevoegen</button>
+            </form>
+        </section>
+
+        <section class="filters">
+            <button class="filter-btn active" data-filter="all">Alle</button>
+            <button class="filter-btn" data-filter="overdue">⚠️ Te laat</button>
+            <button class="filter-btn" data-filter="today">📅 Vandaag</button>
+            <button class="filter-btn" data-filter="upcoming">🔜 Binnenkort</button>
+        </section>
+
+        <section class="task-list" id="taskList">
+            <!-- Tasks worden hier dynamisch ingeladen -->
+        </section>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal">
+            <h2>Taak bewerken</h2>
+            <form id="editForm">
+                <input type="hidden" id="editTaskId">
+                <div class="form-group">
+                    <label for="editName">Taaknaam</label>
+                    <input type="text" id="editName" required>
+                </div>
+                <div class="form-group">
+                    <label for="editInterval">Herhaling</label>
+                    <div class="interval-group">
+                        <input type="number" id="editInterval" min="1" required>
+                        <select id="editUnit">
+                            <option value="days">dagen</option>
+                            <option value="weeks">weken</option>
+                            <option value="months">maanden</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="editCategory">Categorie</label>
+                    <select id="editCategory">
+                        <option value="keuken">🍳 Keuken</option>
+                        <option value="badkamer">🚿 Badkamer</option>
+                        <option value="woonkamer">🛋️ Woonkamer</option>
+                        <option value="slaapkamer">🛏️ Slaapkamer</option>
+                        <option value="tuin">🌿 Tuin</option>
+                        <option value="overig">📦 Overig</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editLastDone">Laatst gedaan op</label>
+                    <input type="date" id="editLastDone">
+                    <small class="form-hint" id="editNextDueHint"></small>
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Annuleren</button>
+                    <button type="submit" class="btn btn-primary">Opslaan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Mark Done Modal -->
+    <div class="modal-overlay" id="doneModal">
+        <div class="modal modal-sm">
+            <h2>✓ Taak afvinken</h2>
+            <p class="done-modal-task" id="doneTaskName"></p>
+            <form id="doneForm">
+                <input type="hidden" id="doneTaskId">
+                <div class="form-group">
+                    <label for="doneDateInput">Wanneer heb je dit gedaan?</label>
+                    <input type="date" id="doneDateInput" required>
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="btn btn-secondary" onclick="closeDoneModal()">Annuleren</button>
+                    <button type="submit" class="btn btn-primary">Afvinken</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
