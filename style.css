@@ -245,6 +245,8 @@ header h1 {
     font-size: 1.2rem;
     z-index: 0;
     border-radius: 0 16px 16px 0;
+    opacity: 0;
+    transition: opacity 0.15s ease;
 }
 
 .task-card.overdue {

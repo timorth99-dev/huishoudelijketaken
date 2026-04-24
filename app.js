@@ -452,6 +452,8 @@ function initSwipe() {
         const inner = card.querySelector('.task-card-inner');
         let startX = 0, currentX = 0, swiping = false;
 
+        const deleteBg = card.querySelector('.task-delete-bg');
+
         inner.addEventListener('touchstart', (e) => {
             startX = e.touches[0].clientX;
             currentX = startX;
@@ -464,6 +466,7 @@ function initSwipe() {
             currentX = e.touches[0].clientX;
             const diff = currentX - startX;
             if (diff < 0) {
+                if (deleteBg) deleteBg.style.opacity = '1';
                 inner.style.transform = `translateX(${Math.max(diff, -120)}px)`;
             }
         }, { passive: true });
@@ -471,6 +474,7 @@ function initSwipe() {
         inner.addEventListener('touchend', () => {
             swiping = false;
             inner.style.transition = 'transform 0.25s ease';
+            if (deleteBg) deleteBg.style.opacity = '0';
             const diff = currentX - startX;
             if (diff < -80) {
                 inner.style.transform = 'translateX(0)';
