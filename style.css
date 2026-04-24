@@ -253,6 +253,18 @@ header h1 {
     white-space: nowrap;
 }
 
+.task-last-done {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-top: 0.2rem;
+}
+
+.task-last-done .since-text {
+    font-weight: 400;
+    color: var(--text-muted);
+}
+
 .task-details {
     font-size: 0.85rem;
     color: var(--text-muted);

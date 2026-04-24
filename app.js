@@ -378,6 +378,22 @@ function renderTasks() {
         // Sanitize UUID id for use in HTML attributes
         const safeId = task.id.replace(/[^a-f0-9-]/g, '');
 
+        // Last done info
+        const lastDoneDate = formatDate(task.last_done);
+        const daysSinceDone = Math.abs(daysUntil(task.last_done));
+        const weeksSinceDone = Math.floor(daysSinceDone / 7);
+        const remainingDays = daysSinceDone % 7;
+        let sinceText;
+        if (daysSinceDone === 0) {
+            sinceText = 'vandaag';
+        } else if (weeksSinceDone === 0) {
+            sinceText = `${daysSinceDone} dag${daysSinceDone !== 1 ? 'en' : ''} geleden`;
+        } else if (remainingDays === 0) {
+            sinceText = `${weeksSinceDone} ${weeksSinceDone === 1 ? 'week' : 'weken'} geleden`;
+        } else {
+            sinceText = `${weeksSinceDone} ${weeksSinceDone === 1 ? 'week' : 'weken'} en ${remainingDays} dag${remainingDays !== 1 ? 'en' : ''} geleden`;
+        }
+
         return `
             <div class="task-card ${status}" data-id="${safeId}">
                 <button class="task-done-btn" onclick="markDone('${safeId}')" title="Markeer als gedaan">✓</button>
@@ -385,6 +401,9 @@ function renderTasks() {
                     <div class="task-name">
                         ${safeName}
                         <span class="task-category-badge">${categoryLabels[task.category] || task.category}</span>
+                    </div>
+                    <div class="task-last-done">
+                        Laatst gedaan: ${lastDoneDate} <span class="since-text">(${sinceText})</span>
                     </div>
                     <div class="task-details">
                         ${dueText} · ${formatInterval(task.interval, task.unit)}
