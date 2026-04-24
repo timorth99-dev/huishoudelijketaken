@@ -383,11 +383,19 @@ function renderTasks() {
         const daysSinceDone = Math.abs(daysUntil(task.last_done));
         const weeksSinceDone = Math.floor(daysSinceDone / 7);
         const remainingDays = daysSinceDone % 7;
+        const monthsSinceDone = Math.floor(daysSinceDone / 30);
+        const remainingWeeksAfterMonths = Math.floor((daysSinceDone % 30) / 7);
         let sinceText;
         if (daysSinceDone === 0) {
             sinceText = 'vandaag';
         } else if (weeksSinceDone === 0) {
             sinceText = `${daysSinceDone} dag${daysSinceDone !== 1 ? 'en' : ''} geleden`;
+        } else if (monthsSinceDone >= 1) {
+            sinceText = `${monthsSinceDone} ${monthsSinceDone === 1 ? 'maand' : 'maanden'}`;
+            if (remainingWeeksAfterMonths > 0) {
+                sinceText += ` en ${remainingWeeksAfterMonths} ${remainingWeeksAfterMonths === 1 ? 'week' : 'weken'}`;
+            }
+            sinceText += ' geleden';
         } else if (remainingDays === 0) {
             sinceText = `${weeksSinceDone} ${weeksSinceDone === 1 ? 'week' : 'weken'} geleden`;
         } else {
