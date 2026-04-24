@@ -130,9 +130,6 @@ function subscribeToChanges() {
 
 // --- Init ---
 document.addEventListener('DOMContentLoaded', async () => {
-    // Set default start date to today
-    document.getElementById('taskStartDate').valueAsDate = new Date();
-
     // Load tasks from Supabase
     tasks = await loadTasks();
     renderTasks();
@@ -177,6 +174,10 @@ function setupEventListeners() {
     document.getElementById('editModal').addEventListener('click', (e) => {
         if (e.target === e.currentTarget) closeEditModal();
     });
+
+    document.getElementById('addModal').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) closeAddModal();
+    });
 }
 
 // --- Add Task ---
@@ -206,7 +207,18 @@ async function handleAddTask(e) {
     // Reset form
     document.getElementById('taskName').value = '';
     document.getElementById('taskInterval').value = 7;
+    closeAddModal();
+}
+
+// --- Add Modal ---
+function openAddModal() {
+    document.getElementById('taskStartDate').valueAsDate = new Date();
+    document.getElementById('addModal').classList.add('active');
     document.getElementById('taskName').focus();
+}
+
+function closeAddModal() {
+    document.getElementById('addModal').classList.remove('active');
 }
 
 // --- Mark Done ---

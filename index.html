@@ -25,49 +25,7 @@
     <div class="app">
         <header>
             <h1>🏠 Huishoudelijke Taken</h1>
-            <p class="subtitle">Plan en beheer je terugkerende taken</p>
         </header>
-
-        <section class="add-task">
-            <h2>Nieuwe taak toevoegen</h2>
-            <form id="taskForm">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="taskName">Taaknaam</label>
-                        <input type="text" id="taskName" placeholder="bijv. Ramen zemen" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="taskInterval">Herhaling</label>
-                        <div class="interval-group">
-                            <input type="number" id="taskInterval" min="1" value="7" required>
-                            <select id="taskUnit">
-                                <option value="days">dagen</option>
-                                <option value="weeks" selected>weken</option>
-                                <option value="months">maanden</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="taskCategory">Categorie</label>
-                        <select id="taskCategory">
-                            <option value="keuken">🍳 Keuken</option>
-                            <option value="badkamer">🚿 Badkamer</option>
-                            <option value="woonkamer">🛋️ Woonkamer</option>
-                            <option value="slaapkamer">🛏️ Slaapkamer</option>
-                            <option value="tuin">🌿 Tuin</option>
-                            <option value="overig">📦 Overig</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="taskStartDate">Startdatum</label>
-                        <input type="date" id="taskStartDate">
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary">+ Taak toevoegen</button>
-            </form>
-        </section>
 
         <section class="filters">
             <button class="filter-btn active" data-filter="all">Alle</button>
@@ -125,6 +83,54 @@
             </form>
         </div>
     </div>
+
+    <!-- Add Task Modal -->
+    <div class="modal-overlay" id="addModal">
+        <div class="modal">
+            <h2>Nieuwe taak toevoegen</h2>
+            <form id="taskForm">
+                <div class="form-group">
+                    <label for="taskName">Taaknaam</label>
+                    <input type="text" id="taskName" placeholder="bijv. Ramen zemen" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="taskInterval">Herhaling</label>
+                        <div class="interval-group">
+                            <input type="number" id="taskInterval" min="1" value="7" required>
+                            <select id="taskUnit">
+                                <option value="days">dagen</option>
+                                <option value="weeks" selected>weken</option>
+                                <option value="months">maanden</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskCategory">Categorie</label>
+                        <select id="taskCategory">
+                            <option value="keuken">🍳 Keuken</option>
+                            <option value="badkamer">🚿 Badkamer</option>
+                            <option value="woonkamer">🛋️ Woonkamer</option>
+                            <option value="slaapkamer">🛏️ Slaapkamer</option>
+                            <option value="tuin">🌿 Tuin</option>
+                            <option value="overig">📦 Overig</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="taskStartDate">Startdatum</label>
+                    <input type="date" id="taskStartDate">
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="btn btn-secondary" onclick="closeAddModal()">Annuleren</button>
+                    <button type="submit" class="btn btn-primary">Toevoegen</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- FAB Button -->
+    <button class="fab" id="fabBtn" onclick="openAddModal()" title="Nieuwe taak">+</button>
 
     <!-- Mark Done Modal -->
     <div class="modal-overlay" id="doneModal">

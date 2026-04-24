@@ -61,11 +61,11 @@ body::before {
 /* Header */
 header {
     text-align: center;
-    margin-bottom: 2rem;
-    padding: 2rem 1rem;
-    background: linear-gradient(135deg, var(--primary) 0%, #8b5cf6 50%, #a78bfa 100%);
+    margin-bottom: 1.25rem;
+    padding: 1rem 1rem;
+    background: linear-gradient(135deg, var(--primary) 0%, #8b5cf6 100%);
     border-radius: var(--radius);
-    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.25);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
     position: relative;
     overflow: hidden;
 }
@@ -79,59 +79,15 @@ header::before {
 }
 
 header h1 {
-    font-size: 1.75rem;
-    font-weight: 800;
-    color: #fff;
-    letter-spacing: -0.02em;
-    position: relative;
-}
-
-.subtitle {
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 0.95rem;
-    font-weight: 400;
-    position: relative;
-}
-
-/* Form */
-.add-task {
-    background: var(--card);
-    border-radius: var(--radius);
-    padding: 1.5rem;
-    box-shadow: var(--shadow);
-    margin-bottom: 1.5rem;
-    border: 1px solid var(--border-light);
-    transition: box-shadow var(--transition);
-}
-
-.add-task:focus-within {
-    box-shadow: var(--shadow-md);
-}
-
-.add-task h2 {
-    font-size: 1rem;
-    margin-bottom: 1rem;
-    color: var(--text);
+    font-size: 1.3rem;
     font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    color: #fff;
+    letter-spacing: -0.01em;
+    position: relative;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
-.add-task h2::before {
-    content: '+';
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 24px;
-    height: 24px;
-    background: var(--primary-bg);
-    color: var(--primary);
-    border-radius: 6px;
-    font-weight: 800;
-    font-size: 1rem;
-}
-
+/* Form (in modal) */
 .form-row {
     display: flex;
     gap: 0.75rem;
@@ -622,10 +578,46 @@ header h1 {
 @supports (padding-top: env(safe-area-inset-top)) {
     .app {
         padding-top: calc(1.5rem + env(safe-area-inset-top));
-        padding-bottom: calc(4rem + env(safe-area-inset-bottom));
+        padding-bottom: calc(5rem + env(safe-area-inset-bottom));
         padding-left: calc(0.75rem + env(safe-area-inset-left));
         padding-right: calc(0.75rem + env(safe-area-inset-right));
     }
+    .fab {
+        bottom: calc(1.5rem + env(safe-area-inset-bottom));
+        right: calc(1.5rem + env(safe-area-inset-right));
+    }
+}
+
+/* FAB Button */
+.fab {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: none;
+    background: linear-gradient(135deg, var(--primary) 0%, #8b5cf6 100%);
+    color: white;
+    font-size: 1.75rem;
+    font-weight: 300;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition);
+    z-index: 50;
+    line-height: 1;
+}
+
+.fab:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 24px rgba(99, 102, 241, 0.5);
+}
+
+.fab:active {
+    transform: scale(0.95);
 }
 *, *::before, *::after {
     box-sizing: border-box;
