@@ -2,11 +2,15 @@
 const SUPABASE_URL = 'https://efiwerbxsxinijnrrazo.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVmaXdlcmJ4c3hpbmlqbnJyYXpvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwNDQ1MjEsImV4cCI6MjA5MjYyMDUyMX0.0-JlYp_irUpYyr1VGu6uQ2YgUjtUK00s6wEgHRkpRWs';
 
-const { createClient } = window.supabase || {};
-if (!createClient) {
-    console.error('Supabase JS library niet geladen!');
+let sb;
+try {
+    sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+} catch (e) {
+    document.addEventListener('DOMContentLoaded', () => {
+        document.body.innerHTML = '<div style="padding:2rem;text-align:center;color:red;"><h2>Fout bij laden</h2><p>' + e.message + '</p></div>';
+    });
+    throw e;
 }
-const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // --- Date Helpers ---
 function today() {
