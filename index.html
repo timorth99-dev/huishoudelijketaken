@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Huishoudelijke Taken</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>🏠 Huishoudelijke Taken</h1>
+
+    <div class="add-task">
+      <input
+        type="text"
+        id="taskInput"
+        placeholder="Nieuwe taak toevoegen..."
+        autocomplete="off"
+      />
+      <select id="categorySelect">
+        <option value="algemeen">Algemeen</option>
+        <option value="keuken">Keuken</option>
+        <option value="badkamer">Badkamer</option>
+        <option value="woonkamer">Woonkamer</option>
+        <option value="tuin">Tuin</option>
+        <option value="boodschappen">Boodschappen</option>
+      </select>
+      <button id="addBtn">Toevoegen</button>
+    </div>
+
+    <div class="filters">
+      <button class="filter-btn active" data-filter="all">Alle</button>
+      <button class="filter-btn" data-filter="open">Openstaand</button>
+      <button class="filter-btn" data-filter="done">Afgerond</button>
+    </div>
+
+    <ul id="taskList"></ul>
+
+    <div class="summary" id="summary"></div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
