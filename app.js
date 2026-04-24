@@ -436,6 +436,7 @@ function renderTasks() {
                     </div>
                     <button class="edit-btn" onclick="openEditModal('${safeId}')" title="Bewerken">✏️</button>
                 </div>
+                <div class="task-delete-bg">🗑</div>
             </div>
         `;
     }).join('');
