@@ -1,4 +1,4 @@
-const CACHE_NAME = 'huishoudelijke-taken-v2';
+const CACHE_NAME = 'huishoudelijke-taken-v3';
 const ASSETS = [
     '/',
     '/index.html',
