@@ -305,27 +305,34 @@ header h1 {
 
 .task-card.overdue {
     border-left-color: var(--danger);
+    background: rgba(244, 63, 94, 0.08);
 }
 .task-card.overdue .task-card-inner {
-    background: linear-gradient(135deg, var(--card) 0%, rgba(244, 63, 94, 0.02) 100%);
+    background: rgba(244, 63, 94, 0.06);
 }
 
 .task-card.today {
-    border-left-color: var(--warning);
+    border-left-color: #f97316;
+    background: rgba(249, 115, 22, 0.08);
 }
 .task-card.today .task-card-inner {
-    background: linear-gradient(135deg, var(--card) 0%, rgba(245, 158, 11, 0.02) 100%);
+    background: rgba(249, 115, 22, 0.06);
 }
 
 .task-card.upcoming {
-    border-left-color: var(--success);
+    border-left-color: #eab308;
+    background: rgba(234, 179, 8, 0.08);
 }
 .task-card.upcoming .task-card-inner {
-    background: linear-gradient(135deg, var(--card) 0%, rgba(16, 185, 129, 0.02) 100%);
+    background: rgba(234, 179, 8, 0.06);
 }
 
 .task-card.future {
-    border-left-color: var(--primary-light);
+    border-left-color: var(--success);
+    background: rgba(16, 185, 129, 0.08);
+}
+.task-card.future .task-card-inner {
+    background: rgba(16, 185, 129, 0.06);
 }
 
 /* Done button */
