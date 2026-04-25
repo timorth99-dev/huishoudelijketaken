@@ -50,3 +50,48 @@ self.addEventListener('fetch', (event) => {
         })
     );
 });
+
+// --- Push Notifications ---
+self.addEventListener('push', (event) => {
+    let data = { title: '🏠 Huishoudelijke Taken', body: 'Je hebt taken die binnenkort moeten!' };
+    try {
+        if (event.data) {
+            data = event.data.json();
+        }
+    } catch (e) {
+        // fallback to default
+    }
+
+    const options = {
+        body: data.body,
+        icon: '/icons/icon-192.svg',
+        badge: '/icons/icon-192.svg',
+        vibrate: [100, 50, 100],
+        data: { url: data.url || '/' },
+        actions: [
+            { action: 'open', title: 'Bekijken' }
+        ]
+    };
+
+    event.waitUntil(
+        self.registration.showNotification(data.title, options)
+    );
+});
+
+// --- Notification Click ---
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close();
+
+    event.waitUntil(
+        clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+            // Focus existing window if open
+            for (const client of clientList) {
+                if (client.url.includes(self.location.origin) && 'focus' in client) {
+                    return client.focus();
+                }
+            }
+            // Otherwise open new window
+            return clients.openWindow(event.notification.data.url || '/');
+        })
+    );
+});

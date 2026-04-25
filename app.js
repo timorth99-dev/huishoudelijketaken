@@ -63,6 +63,201 @@ const categoryLabels = {
 let tasks = [];
 let currentFilter = 'all';
 
+// --- VAPID Public Key ---
+const VAPID_PUBLIC_KEY = 'BLBKquXeNOKW6Xb4-y1aKEAmIPrP2uFS3n_qdAM7WOWdzwNB9_nhyFT4dG1gOMGyct7Ls25Zt4eb3tRi-GxyHm4';
+
+// --- Push Notifications ---
+function urlBase64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+    for (let i = 0; i < rawData.length; ++i) {
+        outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+}
+
+async function subscribeToPush(registration) {
+    try {
+        const subscription = await registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+        });
+
+        const subJson = subscription.toJSON();
+        // Save to Supabase
+        const { error } = await sb
+            .from('push_subscriptions')
+            .upsert({
+                endpoint: subJson.endpoint,
+                p256dh: subJson.keys.p256dh,
+                auth: subJson.keys.auth
+            }, { onConflict: 'endpoint' });
+
+        if (error) {
+            console.error('Fout bij opslaan push subscription:', error);
+            return false;
+        }
+        return true;
+    } catch (err) {
+        console.error('Push subscription mislukt:', err);
+        return false;
+    }
+}
+
+async function unsubscribeFromPush() {
+    try {
+        const registration = await navigator.serviceWorker.ready;
+        const subscription = await registration.pushManager.getSubscription();
+        if (subscription) {
+            const endpoint = subscription.endpoint;
+            await subscription.unsubscribe();
+            // Remove from Supabase
+            await sb.from('push_subscriptions').delete().eq('endpoint', endpoint);
+        }
+    } catch (err) {
+        console.error('Uitschrijven mislukt:', err);
+    }
+}
+
+async function checkPushSubscription() {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+        return 'unsupported';
+    }
+    try {
+        const registration = await navigator.serviceWorker.ready;
+        const subscription = await registration.pushManager.getSubscription();
+        return subscription ? 'subscribed' : 'unsubscribed';
+    } catch {
+        return 'unsupported';
+    }
+}
+
+function updateNotificationButton(status) {
+    const btn = document.getElementById('notifBtn');
+    if (!btn) return;
+
+    if (status === 'unsupported') {
+        btn.style.display = 'none';
+        return;
+    }
+
+    btn.style.display = 'flex';
+    if (status === 'subscribed') {
+        btn.textContent = '🔔';
+        btn.title = 'Meldingen uitschakelen';
+        btn.classList.add('active');
+    } else {
+        btn.textContent = '🔕';
+        btn.title = 'Meldingen inschakelen';
+        btn.classList.remove('active');
+    }
+}
+
+async function toggleNotifications() {
+    const status = await checkPushSubscription();
+
+    if (status === 'subscribed') {
+        await unsubscribeFromPush();
+        updateNotificationButton('unsubscribed');
+        return;
+    }
+
+    // Request permission
+    const permission = await Notification.requestPermission();
+    if (permission !== 'granted') {
+        alert('Je hebt meldingen geblokkeerd. Schakel ze in via je browserinstellingen.');
+        return;
+    }
+
+    const registration = await navigator.serviceWorker.ready;
+    const success = await subscribeToPush(registration);
+    updateNotificationButton(success ? 'subscribed' : 'unsubscribed');
+
+    if (success) {
+        // Send a test notification immediately
+        registration.showNotification('🏠 Meldingen ingeschakeld!', {
+            body: 'Je ontvangt nu meldingen als taken bijna moeten worden uitgevoerd.',
+            icon: '/icons/icon-192.svg'
+        });
+    }
+}
+
+// --- Check tasks due soon & send local notification ---
+async function checkAndNotifyDueTasks() {
+    if (Notification.permission !== 'granted') return;
+    if (!tasks.length) return;
+
+    const todayKey = today().toISOString().split('T')[0];
+    const notifiedKey = 'notified_' + todayKey;
+    const alreadyNotified = JSON.parse(localStorage.getItem(notifiedKey) || '[]');
+
+    const dueSoon = tasks.filter(task => {
+        const nextDue = calcNextDue(task.last_done, task.interval, task.unit);
+        const days = daysUntil(nextDue);
+        return days >= 0 && days <= 2 && !alreadyNotified.includes(task.id);
+    });
+
+    if (dueSoon.length === 0) return;
+
+    const registration = await navigator.serviceWorker.ready;
+    for (const task of dueSoon) {
+        const nextDue = calcNextDue(task.last_done, task.interval, task.unit);
+        const days = daysUntil(nextDue);
+        let body;
+        if (days === 0) {
+            body = `"${task.name}" moet vandaag worden uitgevoerd!`;
+        } else if (days === 1) {
+            body = `"${task.name}" moet morgen worden uitgevoerd!`;
+        } else {
+            body = `"${task.name}" moet over ${days} dagen worden uitgevoerd (${formatDate(nextDue)}).`;
+        }
+
+        registration.showNotification('🏠 Taak binnenkort!', {
+            body: body,
+            icon: '/icons/icon-192.svg',
+            badge: '/icons/icon-192.svg',
+            tag: 'task-' + task.id,
+            data: { url: '/' }
+        });
+
+        alreadyNotified.push(task.id);
+    }
+    localStorage.setItem(notifiedKey, JSON.stringify(alreadyNotified));
+
+    // Clean up old notification keys
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('notified_') && key !== notifiedKey) {
+            localStorage.removeItem(key);
+        }
+    }
+}
+
+// --- Test Notification ---
+async function sendTestNotification() {
+    if (!('serviceWorker' in navigator)) {
+        alert('Service Worker niet beschikbaar.');
+        return;
+    }
+
+    if (Notification.permission !== 'granted') {
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') {
+            alert('Je hebt meldingen geblokkeerd.');
+            return;
+        }
+    }
+
+    const registration = await navigator.serviceWorker.ready;
+    registration.showNotification('🧪 Test melding', {
+        body: 'Push notificaties werken! Je ontvangt meldingen als taken bijna moeten.',
+        icon: '/icons/icon-192.svg',
+        badge: '/icons/icon-192.svg'
+    });
+}
+
 // --- Data Layer (Supabase) ---
 async function loadTasks() {
     const { data, error } = await sb
@@ -146,6 +341,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Setup swipe-to-delete
     initSwipe();
+
+    // Initialize push notification UI
+    const pushStatus = await checkPushSubscription();
+    updateNotificationButton(pushStatus);
+
+    // Check for tasks due soon and notify
+    if (pushStatus === 'subscribed') {
+        checkAndNotifyDueTasks();
+    }
 });
 
 // --- Event Listeners ---
