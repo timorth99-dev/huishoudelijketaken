@@ -305,34 +305,30 @@ header h1 {
 
 .task-card.overdue {
     border-left-color: var(--danger);
-    background: rgba(244, 63, 94, 0.08);
 }
 .task-card.overdue .task-card-inner {
-    background: rgba(244, 63, 94, 0.06);
+    background: var(--card);
 }
 
 .task-card.today {
     border-left-color: #f97316;
-    background: rgba(249, 115, 22, 0.08);
 }
 .task-card.today .task-card-inner {
-    background: rgba(249, 115, 22, 0.06);
+    background: var(--card);
 }
 
 .task-card.upcoming {
     border-left-color: #eab308;
-    background: rgba(234, 179, 8, 0.08);
 }
 .task-card.upcoming .task-card-inner {
-    background: rgba(234, 179, 8, 0.06);
+    background: var(--card);
 }
 
 .task-card.future {
     border-left-color: var(--success);
-    background: rgba(16, 185, 129, 0.08);
 }
 .task-card.future .task-card-inner {
-    background: rgba(16, 185, 129, 0.06);
+    background: var(--card);
 }
 
 /* Done button */
@@ -429,8 +425,18 @@ header h1 {
 }
 
 .task-details .today-text {
-    color: var(--warning);
+    color: #f97316;
     font-weight: 700;
+}
+
+.task-details .upcoming-text {
+    color: #eab308;
+    font-weight: 700;
+}
+
+.task-details .future-text {
+    color: var(--success);
+    font-weight: 600;
 }
 
 /* Edit button */

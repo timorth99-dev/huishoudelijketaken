@@ -589,8 +589,10 @@ function renderTasks() {
             dueText = `<span class="overdue-text">${Math.abs(days)} dag${Math.abs(days) !== 1 ? 'en' : ''} te laat!</span>`;
         } else if (days === 0) {
             dueText = `<span class="today-text">Vandaag!</span>`;
+        } else if (days <= 3) {
+            dueText = `<span class="upcoming-text">Over ${days} dag${days !== 1 ? 'en' : ''} (${formatDate(nextDue)})</span>`;
         } else {
-            dueText = `Over ${days} dag${days !== 1 ? 'en' : ''} (${formatDate(nextDue)})`;
+            dueText = `<span class="future-text">Over ${days} dag${days !== 1 ? 'en' : ''} (${formatDate(nextDue)})</span>`;
         }
 
         // Sanitize task name to prevent XSS
